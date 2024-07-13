@@ -75,6 +75,21 @@ RUN python3 -m pip install --upgrade pip && \
 #COPY config ./config
 #COPY launch ./launch
 
+WORKDIR /root/ros2_ws/src
+#COPY i2c_pwm_board/ src/i2c_pwm_board
+#RUN git clone --recursive https://github.com/vertueux/i2c_pwm_board
+#RUN git clone --recursive https://github.com/rosblox/pca9685_ros2_control
+RUN git clone https://github.com/artoo-ai/ros-pwm-pca9685.git -b ros2
+
+# Install dependencies
+#RUN chmod +x i2c_pwm_board/scripts/install_dependencies.sh && \
+#    i2c_pwm_board/scripts/install_dependencies.sh
+
+WORKDIR /root/ros2_ws
+# Build the package
+RUN source /opt/ros/$ROS_DISTRO/install/setup.bash && \ 
+    colcon build
+
 # Setup environment variables 
 COPY ros_entrypoint_jetson.sh /sbin/ros_entrypoint.sh
 RUN sudo chmod 755 /sbin/ros_entrypoint.sh
